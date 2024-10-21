@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background-color: #f8f8f8;
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .wrapper {
+        width: 100%;
+        table-layout: fixed;
+        background-color: #f8f8f8;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .button {
+        background-color: #1b9eda;
+        color: #ffffff;
+        border-radius: 4px;
+        padding: 15px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .social-icons a {
+        color: #ffffff;
+        text-decoration: none;
+        font-size: 24px;
+        margin: 0 8px;
+      }
+      .social-icons {
+        text-align: right;
+        padding: 4px 8px;
+        background-color: #1b9eda;
+      }
+      @media screen and (max-width: 620px) {
+        .container {
+          width: 100% !important;
+        }
+        .padding-mobile {
+          padding: 20px !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <center class="wrapper">
+      <div class="container">
+        <!-- START HEADER -->
+        <table>
+          <tr>
+            <td
+              class="padding-mobile"
+              style="padding: 30px 30px 0; text-align: center"
+            >
+              <!-- Optional content can be added here -->
+            </td>
+          </tr>
+        </table>
+        <!-- END HEADER -->
+
+        <!-- START MAIN CONTENT -->
+        <table>
+          <tr>
+            <td style="padding: 30px; text-align: center">
+              <p style="font-size: 24px; line-height: 1.5">
+                Kindly click on this button to verify your account
+              </p>
+              <a href="{{account_verification_url}}" class="button">
+                <strong>Verify Your Account</strong>
+              </a>
+              <p style="font-size: 12px; margin-top: 12px">
+                If this does not work, kindly copy this link into your browser:
+                <br />
+                <a href="{{account_verification_url}}" style="color: #1b9eda"
+                  >{{account_verification_url}}</a
+                >
+              </p>
+            </td>
+          </tr>
+        </table>
+        <!-- END MAIN CONTENT -->
+
+        <!-- START FOOTER -->
+        <table>
+          <tr>
+            <td class="social-icons">
+              <a href="https://www.facebook.com"
+                ><i class="fa fa-facebook"></i
+              ></a>
+              <a href="https://www.instagram.com"
+                ><i class="fa fa-instagram"></i
+              ></a>
+              <a href="https://www.linkedin.com/"
+                ><i class="fa fa-linkedin"></i
+              ></a>
+              <a href="https://twitter.com/"><i class="fa fa-twitter"></i></a>
+              <a href="https://www.youtube.com/"
+                ><i class="fa fa-youtube"></i
+              ></a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 30px; text-align: center">
+              <p style="font-size: 12px; color: #444444">
+                &copy; {% now 'Y' %} BPOHOMES. All rights reserved.
+              </p>
+            </td>
+          </tr>
+        </table>
+        <!-- END FOOTER -->
+      </div>
+    </center>
+  </body>
+</html>

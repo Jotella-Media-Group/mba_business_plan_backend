@@ -1,0 +1,166 @@
+version: 2.1
+
+jobs:
+  build:
+    resource_class: small
+    working_directory: ~/circleci-lead
+    docker:
+      - image: python:3.11-slim-buster
+        environment:
+          SITE_ADMINS: "eca@example.com"
+          SECRET_KEY: 'bhajsbdfadsa'
+          DEBUG: False
+          EMAIL_HOST: 'smtp.sendgrid.net'
+          EMAIL_PORT: 587
+          EMAIL_HOST_USER: "dsfihbasd"
+          EMAIL_HOST_PASSWORD: 'ncnovughvqqphvit'
+          SENDGRID_KEY: 'Srdcvbuilfjd'
+          ACCESS_TOKEN_LIFETIME: 100
+          REFRESH_TOKEN_LIFETIME: 100
+          PROJECT_ROOT_DIR: ""
+          BACKUP_LOCATION: ""
+          LOGGING_LOCATION: ""
+          CRONJOBS: "day_of_month: last"
+          FRONTEND_URL: "http://localhost/"
+          CORS_ALLOWED_ORIGINS :  '["http://localhost"]'
+          DATABASE_NAME: "circle_test"
+          DATABASE_USER: "ubuntu"
+          DATABASE_PASSWORD: "password"
+          DATABASE_PORT: 5432
+          DATABASE_HOST: "localhost"
+          AWS_STORAGE_BUCKET_NAME: marketing-center
+          ALLOWED_HOSTS: "['localhost','127.0.0.1']"
+          CSRF_TRUSTED_ORIGINS: "['http://localhost','http://localhost:3000']"
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_S3_ENDPOINT_URL:  "https://s3.amazonaws.com"
+          BPO_HOMES_SECRET_KEY:  "fs445trfg4"
+      - image: postgres
+        environment:
+          POSTGRES_USER: "ubuntu"
+          POSTGRES_DB: "circle_test"
+          POSTGRES_PASSWORD: "password"
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - mc-{{ .Branch }}-{{ checksum "requirements.txt"}}
+            - mc-{{ .Branch }}
+            - mc
+
+      - run:
+          name: Install libraries
+          command: |
+            pip install --upgrade pip
+            pip install setuptools
+            pip install -r requirements.txt
+
+      - save_cache:
+          paths:
+            - /usr/local/lib/python3.7/site-packages
+            - /usr/local/bin/
+          key: mc-{{ .Branch }}-{{ checksum "requirements.txt"}}
+
+      - run:
+          name: check migrations
+          command: |
+            ./bin/check-migrations.sh
+
+  build_docker_image:
+    resource_class: medium
+    machine:
+      image: default
+    steps:
+      - checkout
+
+      - run:
+          name: Build image
+          command: docker build -t marketing_center .
+
+      - run:
+          name: Publish image
+          command: ./bin/publish-image.sh $CIRCLE_BRANCH
+
+  deploy:
+    resource_class: small
+    working_directory: ~/circleci-mc
+    docker:
+      - image: python:3.11-slim-buster
+        environment:
+          SITE_ADMINS: "eca@example.com"
+          SECRET_KEY: 'bhajsbdfadsa'
+          DEBUG: False
+          EMAIL_HOST: 'smtp.sendgrid.net'
+          EMAIL_PORT: 587
+          EMAIL_HOST_USER: "dsfihbasd"
+          EMAIL_HOST_PASSWORD: 'ncnovughvqqphvit'
+          SENDGRID_KEY: 'Srdcvbuilfjd'
+          ACCESS_TOKEN_LIFETIME: 100
+          REFRESH_TOKEN_LIFETIME: 100
+          PROJECT_ROOT_DIR: ""
+          BACKUP_LOCATION: ""
+          LOGGING_LOCATION: ""
+          CRONJOBS: "day_of_month: last"
+          FRONTEND_URL: "http://localhost/"
+          CORS_ALLOWED_ORIGINS :  '["http://localhost"]'
+          DATABASE_NAME: "circle_test"
+          DATABASE_USER: "ubuntu"
+          DATABASE_PASSWORD: "password"
+          DATABASE_PORT: 5432
+          DATABASE_HOST: "localhost"
+          AWS_STORAGE_BUCKET_NAME: marketing-center
+          ALLOWED_HOSTS: "['localhost','127.0.0.1']"
+          CSRF_TRUSTED_ORIGINS: "['http://localhost','http://localhost:3000']"
+          AWS_ACCESS_KEY_ID: ""
+          AWS_SECRET_ACCESS_KEY: ""
+          AWS_S3_ENDPOINT_URL:  "https://s3.amazonaws.com"
+          BPO_HOMES_SECRET_KEY:  "fs445trfg4"
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - mc-{{ .Branch }}-{{ checksum "requirements.txt"}}
+            - mc-{{ .Branch }}
+            - mc
+
+      - run:
+          name: Install libraries
+          command: |
+            pip install awscli==1.32.16 #setuptools
+            pip install -r requirements.txt
+
+      - run:
+          name: Deploy to ECS
+          command: ./bin/deploy-ecs.sh $CIRCLE_BRANCH
+
+workflows:
+  test_and_deploy:
+    jobs:
+      - build:
+          context:
+            - global
+
+      - build_docker_image:
+          context:
+            - global
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - develop
+                - main
+
+      - deploy:
+          context:
+            - global
+          requires:
+            - build_docker_image
+          filters:
+            branches:
+              only:
+                - develop
+                - main
