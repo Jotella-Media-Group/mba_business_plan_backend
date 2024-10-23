@@ -11,9 +11,9 @@ from django.conf.urls.static import static
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="MARKETING CENTER API",
+        title="MBA BUSINESS PLAN API",
         default_version="v1",
-        description="BPOHOMES MARKETING CENTER",
+        description="MBA BUSINESS PLAN",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="enartey@bpohomes.com"),
         license=openapi.License(name="BSD License"),

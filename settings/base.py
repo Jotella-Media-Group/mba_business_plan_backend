@@ -25,6 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
+BPO_HOMES_SECRET_KEY = config('BPO_HOMES_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
@@ -57,6 +58,7 @@ INSTALLED_APPS = [
 
     # LOCAL APPS
     "account",
+    "farm",
 ]
 
 MIDDLEWARE = [
@@ -130,12 +132,11 @@ AUTH_PASSWORD_VALIDATORS = [
 CORS_ALLOW_CREDENTIALS = True
 CSRF_TRUSTED_ORIGINS = eval(config("CSRF_TRUSTED_ORIGINS"))
 
-CORS_ALLOWED_ORIGINS = eval(
-    config("CORS_ALLOWED_ORIGINS", default='http://localhost:5173'))
+CORS_ALLOWED_ORIGINS = eval(config("CORS_ALLOWED_ORIGINS"))
 
 
-CORS_ALLOWED_ORIGINS.append('http://localhost:5173')
-
+CORS_ALLOWED_ORIGINS.append('http://localhost:3000')
+CORS_ALLOWED_ORIGINS.append('http://localhost:5500')
 
 FRONTEND_URL = config("FRONTEND_URL")
 
@@ -263,10 +264,10 @@ EMAIL_HOST_PASSWORD = SENDGRID_KEY
 DEFAULT_FROM_EMAIL = config("EMAIL_HOST_USER")
 
 
-ADMINS = [
-    ("Emmanuel", config('SITE_ADMINS')),
-]
+SITE_ADMINS = config("SITE_ADMINS")
+ADMIN_NAME, ADMIN_EMAIL = SITE_ADMINS.split(',', 1)
 
+ADMINS = [(ADMIN_NAME, ADMIN_EMAIL)]
 
 if not DEBUG:
 
